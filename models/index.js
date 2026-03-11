@@ -9,4 +9,4 @@ Token.belongsTo(User, {
     foreignKey: 'userId'
 });
 
-export default {User, Token}
+export default {User, Token};
