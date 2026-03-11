@@ -1,12 +1,15 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import sequelize from "./db.js";
+import User from "./models/user-model.js";
 import pg from 'pg';
 
 let PORT = 5000;
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // console.log(process.env)
