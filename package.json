@@ -17,6 +17,8 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.19.0",
     "sequelize": "^6.37.8",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

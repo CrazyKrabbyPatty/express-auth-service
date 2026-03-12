@@ -4,12 +4,13 @@ import {v4 as uuid_v4} from "uuid";
 import MailService from "./mail-service.js";
 import TokenService from "./token-service.js";
 import UserDto from "../dtos/user-dto.js";
+import ApiError from "../exceptions/api-error.js";
 
 class UserService {
     async registration(email, password){
-        const candidate = await UserModel.findOne({email})
+        const candidate = await UserModel.findOne({where: {email}})
         if (candidate){
-            throw new Error(`User with email ${email} already exists`)
+            throw ApiError.BadRequest(`User with email ${email} already exists`)
         }
         const hashedPassword = await bcrypt.hash(password, 6);
         const activationLink = uuid_v4();
