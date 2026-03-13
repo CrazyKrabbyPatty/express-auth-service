@@ -7,38 +7,11 @@ import router from "./router/mainrouter.js"
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import error_middleware from './middlewares/error-middleware.js';
+import swaggerOptions from "./swagger.js"
 
 let PORT = process.env.PORT || 8000;
 
 const app = express();
-
-const swaggerOptions = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'API Документация',
-            version: '1.0.0',
-            description: 'Документация для Express API приложения',
-        },
-        servers: [
-            {
-                url: `http://localhost:${PORT}`,
-                description: 'Локальный сервер',
-            },
-        ],
-        components: {
-            securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT',
-                },
-            },
-        },
-    },
-    // Укажи пути к файлам, где ты будешь писать JSDoc комментарии
-    apis: ['./router/*.js'],
-};
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
