@@ -30,6 +30,24 @@ class UserService {
 
         return {...tokens, user: userDto};
     }
+
+    async login(email, password){
+        const user = await UserModel.findOne({where: {email}})
+        console.log(user)
+        if (!user){
+            throw ApiError.BadRequest(`User with email ${email} does not exist`)
+        }
+        const isPassEquals = bcrypt.compare(password, user.password);
+        if (!isPassEquals){
+            throw ApiError.BadRequest(`Invalid password`)
+        }
+        const userDto = new UserDto(user);
+        const tokens = TokenService.generateTokens({...userDto});
+
+        await TokenService.saveToken(userDto.id, tokens.refreshToken);
+
+        return {...tokens, user: userDto};
+    }
 }
 
 export default new UserService();
