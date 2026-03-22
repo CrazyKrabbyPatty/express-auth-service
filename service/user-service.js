@@ -1,7 +1,6 @@
 import UserModel from "../models/user-model.js";
 import bcrypt from "bcrypt";
 import {v4 as uuid_v4} from "uuid";
-import MailService from "./mail-service.js";
 import TokenService from "./token-service.js";
 import UserDto from "../dtos/user-dto.js";
 import ApiError from "../exceptions/api-error.js";
@@ -23,7 +22,6 @@ class UserService {
                 activationLink: activationLink,
             }
         )
-        await MailService.sendActivationLink(email, activationLink);
 
         const userDto = new UserDto(user);
         const tokens = TokenService.generateTokens({...userDto});

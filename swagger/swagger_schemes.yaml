@@ -1,0 +1,41 @@
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refreshToken:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "b121ba6f-3583-4e1f-9845-420a3abaf9c6"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        isActivated:
+          type: boolean
+          example: true
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Unauthorized"

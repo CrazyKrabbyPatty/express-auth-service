@@ -44,14 +44,6 @@ class UserController {
         }
     }
 
-    async activate(req, res, next){
-        try {
-
-        } catch (e) {
-            next(e)
-        }
-    }
-
     async refresh(req, res, next){
         try {
             const {refreshToken} = req.cookies;
@@ -63,13 +55,6 @@ class UserController {
         }
     }
 
-    async getUsers(req, res, next){
-        try {
-            res.json(['xuy', 'slava'])
-        } catch (e) {
-            next(e)
-        }
-    }
 }
 
 export default

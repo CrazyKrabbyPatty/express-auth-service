@@ -5,22 +5,22 @@ import sequelize from "./db.js";
 import models from './models/index.js';
 import router from "./router/mainrouter.js"
 import swaggerUi from 'swagger-ui-express';
-import swaggerJsdoc from 'swagger-jsdoc';
 import error_middleware from './middlewares/error-middleware.js';
-import swaggerOptions from "./swagger.js"
 import cookieParser from "cookie-parser";
+import yaml from 'js-yaml';
+import fs from 'fs';
 
 let PORT = process.env.PORT || 8000;
 
 const app = express();
 
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
+const swaggerDocument = yaml.load(fs.readFileSync('./swagger/swagger.yaml', 'utf8'));
 
 app.use(express.json());
 app.use(cookieParser())
 app.use(cors());
 app.use('/api', router);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(error_middleware);
 
 async function Start_App(){
