@@ -37,7 +37,8 @@ class UserService {
         if (!user){
             throw ApiError.BadRequest(`User with email ${email} does not exist`)
         }
-        const isPassEquals = bcrypt.compare(password, user.password);
+        const isPassEquals = await bcrypt.compare(password, user.password);
+        console.log("Проверка пароля" + isPassEquals)
         if (!isPassEquals){
             throw ApiError.BadRequest(`Invalid password`)
         }
