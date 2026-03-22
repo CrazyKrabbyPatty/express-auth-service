@@ -5,6 +5,7 @@ import MailService from "./mail-service.js";
 import TokenService from "./token-service.js";
 import UserDto from "../dtos/user-dto.js";
 import ApiError from "../exceptions/api-error.js";
+import tokenService from "./token-service.js";
 
 class UserService {
     async registration(email, password){
@@ -38,13 +39,34 @@ class UserService {
             throw ApiError.BadRequest(`User with email ${email} does not exist`)
         }
         const isPassEquals = await bcrypt.compare(password, user.password);
-        console.log("Проверка пароля" + isPassEquals)
         if (!isPassEquals){
             throw ApiError.BadRequest(`Invalid password`)
         }
         const userDto = new UserDto(user);
         const tokens = TokenService.generateTokens({...userDto});
 
+        await TokenService.saveToken(userDto.id, tokens.refreshToken);
+
+        return {...tokens, user: userDto};
+    }
+
+    async logout(refreshToken){
+        return await tokenService.removeToken(refreshToken);
+    }
+
+    async refresh(refreshToken){
+        if (!refreshToken){
+            throw ApiError.UnauthorizedError()
+        }
+        const userData = tokenService.validateRefreshToken(refreshToken);
+        console.log("userData " + userData);
+        const tokenFromDB = await tokenService.findToken(refreshToken);
+        if (!userData || !tokenFromDB){
+            throw ApiError.UnauthorizedError();
+        }
+        const user = await UserModel.findByPk(userData.id)
+        const userDto = new UserDto(user);
+        const tokens = TokenService.generateTokens({...userDto});
         await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
         return {...tokens, user: userDto};

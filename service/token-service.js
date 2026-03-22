@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import TokenModel from "../models/token-model.js";
+import tokenModel from "../models/token-model.js";
 
 class TokenService {
     generateTokens(payload){
@@ -11,14 +12,38 @@ class TokenService {
         }
     }
 
+    validateAccessToken(token){
+        try {
+            return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+        } catch (e){
+            return null;
+        }
+    }
+
+    validateRefreshToken(token){
+        try {
+            return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+        } catch (e){
+            return null;
+        }
+    }
+
     async saveToken(userId, refreshToken){
-        const tokenData = await TokenModel.findOne({user: {userId: userId}})
+        const tokenData = await TokenModel.findOne({where: {userId: userId}})
         if (tokenData){
             tokenData.refreshToken = refreshToken;
             return tokenData.save();
         }
 
-        return await TokenModel.create({user: userId, refreshToken: refreshToken});
+        return await TokenModel.upsert({user: userId, refreshToken: refreshToken});
+    }
+
+    async removeToken(refreshToken){
+        return await tokenModel.destroy({where: {refreshToken}})
+    }
+
+    async findToken(refreshToken){
+        return await tokenModel.findOne({where: {refreshToken}})
     }
 }
 

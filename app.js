@@ -8,6 +8,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import error_middleware from './middlewares/error-middleware.js';
 import swaggerOptions from "./swagger.js"
+import cookieParser from "cookie-parser";
 
 let PORT = process.env.PORT || 8000;
 
@@ -16,6 +17,7 @@ const app = express();
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 app.use(express.json());
+app.use(cookieParser())
 app.use(cors());
 app.use('/api', router);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

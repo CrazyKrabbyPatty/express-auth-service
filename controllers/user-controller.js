@@ -32,7 +32,13 @@ class UserController {
 
     async logout(req, res, next){
         try {
-
+            const {refreshToken} = req.cookies;
+            if (!refreshToken) {
+                return next(ApiError.BadRequest("User not logged in"));
+            }
+            const token = await userService.logout(refreshToken);
+            res.clearCookie('refreshToken');
+            return res.sendStatus(200);
         } catch (e) {
             next(e)
         }
@@ -48,7 +54,10 @@ class UserController {
 
     async refresh(req, res, next){
         try {
-
+            const {refreshToken} = req.cookies;
+            const userData = await userService.refresh(refreshToken);
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+            return res.json(userData);
         } catch (e) {
             next(e)
         }
@@ -63,4 +72,5 @@ class UserController {
     }
 }
 
-export default new UserController();
+export default
+new UserController();
