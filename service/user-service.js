@@ -8,7 +8,7 @@ import ApiError from "../exceptions/api-error.js";
 
 class UserService {
     async registration(email, password){
-        const candidate = await UserModel.findOne({where: {email}})
+        const candidate = await UserModel.findOne({where: {email: email}})
         if (candidate){
             throw ApiError.BadRequest(`User with email ${email} already exists`)
         }
