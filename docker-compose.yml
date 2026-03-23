@@ -1,39 +1,59 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    container_name: express_app
+  db:
+    image: postgres:15-alpine
+    container_name: auth-db
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+
+    env_file:
+      - .env.docker
+
     environment:
-      - NODE_ENV=production
-      - DB_HOST=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=secret_password
-      - DB_NAME=mydb
-      - JWT_SECRET=super_secret_key
-    depends_on:
-      - postgres
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres_db
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth-app
+
+    env_file:
+      - .env.docker
+
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secret_password
-      - POSTGRES_DB=mydb
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${PORT}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+
+    ports:
+      - "${APP_PORT:-8000}:${APP_PORT:-8000}"
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - .:/app
     networks:
       - app-network
 
 volumes:
-  pgdata:
+  postgres_data:
 
 networks:
   app-network:
