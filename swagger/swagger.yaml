@@ -43,6 +43,8 @@ paths:
           description: Пользователь успешно создан
         '400':
           description: Ошибка валидации
+        '500':
+          description: Ошибка работы сервиса
 
   /api/login:
     post:
@@ -63,27 +65,40 @@ paths:
                   example: 12345678
       responses:
         '200':
-          description: Пользователь успешно создан
+          description: Пользователь успешно авторизован
         '400':
-          description: Ошибка валидации
+          description: Ошибка валидации или пользователь не существует
+        '500':
+          description: Ошибка работы сервиса
 
   /api/refresh:
     post:
       summary: Обновление сессии
       tags: [ Auth ]
       description:
-        Обновляет access и refresh токены пользователя.
+        Обновляет access и refresh токены пользователя. 
+        В документации может не работать, так как требует refreshToken из куки.
       responses:
         '200':
           description: Токены успешно обновлены
           content: { }
+        '404':
+          description: Отсутствует refreshToken
+        '500':
+          description: Ошибка работы сервиса
 
   /api/logout:
     post:
       summary: Выход из сессии
       tags: [Auth]
+      description:
+        Удаляет сессию пользователя и изымает refreshToken.
+        В документации может не работать, так как требует refreshToken из куки.
       responses:
         '200':
           description: Успешный выход
           content: {}
-
+        '401':
+          description: Пользователь не авторизован
+        '500':
+          description: Ошибка работы сервиса

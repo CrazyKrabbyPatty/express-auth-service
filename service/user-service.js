@@ -19,7 +19,6 @@ class UserService {
             {
                 email: email,
                 password: hashedPassword,
-                activationLink: activationLink,
             }
         )
 
@@ -54,10 +53,10 @@ class UserService {
 
     async refresh(refreshToken){
         if (!refreshToken){
+            console.log("Токен не был найден")
             throw ApiError.UnauthorizedError()
         }
         const userData = tokenService.validateRefreshToken(refreshToken);
-        console.log("userData " + userData);
         const tokenFromDB = await tokenService.findToken(refreshToken);
         if (!userData || !tokenFromDB){
             throw ApiError.UnauthorizedError();

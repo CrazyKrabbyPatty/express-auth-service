@@ -13,7 +13,7 @@ class ApiError extends Error {
     }
 
     static BadRequest(message, errors = []) {
-        return new ApiError(400, message, errors);
+        return new ApiError(400, message, (!errors.length) ? "None of sub errors exists" : errors);
     }
 }
 

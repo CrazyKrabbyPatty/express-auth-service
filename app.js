@@ -31,8 +31,11 @@ async function Start_App(){
         app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
         console.log(`Swagger доступен по адресу: http://localhost:${PORT}/api-docs`);
     } catch(error){
-        console.log("Error to start app connect: " + error)
+        console.error("Error to start app connect: " + error);
+        // console.error(error.stack);
+        // process.exit(1);
     }
 }
 
+// Start_App()
 Start_App().then(() => console.log("Приложение запущено успешно!"));
